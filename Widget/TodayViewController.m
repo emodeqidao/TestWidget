@@ -9,6 +9,7 @@
 #import "TodayViewController.h"
 #import <NotificationCenter/NotificationCenter.h>
 #import "WidgetMatchCell.h"
+#import "WidgetNewsCell.h"
 
 @interface TodayViewController () <NCWidgetProviding>
 
@@ -19,18 +20,23 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0)
+    {
+        self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
+    }
 }
 
 - (void)widgetActiveDisplayModeDidChange:(NCWidgetDisplayMode)activeDisplayMode withMaximumSize:(CGSize)maxSize
 {
     if (activeDisplayMode == NCWidgetDisplayModeCompact)
     {
-        self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 110);
+        self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 105);
+        _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, 105);
     }
     else
     {
-        self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 300);
+        self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 228);
+        _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, 218);
     }
 }
 
@@ -45,31 +51,68 @@
     
     _tabelView = [[UITableView alloc] init];
     _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    _tabelView.backgroundColor = [UIColor greenColor];
+    _tabelView.backgroundColor = [UIColor clearColor];
     _tabelView.delegate = self;
     _tabelView.dataSource = self;
     _tabelView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tabelView];
     
+    if ([[UIDevice currentDevice].systemVersion floatValue] < 10.0)
+    {
+        self.preferredContentSize = CGSizeMake(0.0, 105);
+    }
+    
     NSLog(@"%f  %f",self.preferredContentSize.width,self.preferredContentSize.height);
+    NSLog(@"%f  %f",iwidth_screen,iheight_screen);
+    NSLog(@"%f  %f",iwidth_app,iheight_app);
+    
+    [self performSelector:@selector(resetframe) withObject:nil afterDelay:5];
+}
+
+-(void) resetframe
+{
+    self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 228);
+    _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, 218);
 }
 
 
+// iOS 10 不会触发
+- (UIEdgeInsets)widgetMarginInsetsForProposedMarginInsets:(UIEdgeInsets)defaultMarginInsets {
+    return UIEdgeInsetsZero; // 完全靠到了左边....
+}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return 3;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cell_id = @"cell_id";
-    WidgetMatchCell *cell = [tableView dequeueReusableCellWithIdentifier:cell_id];
-    if (cell == nil)
+    if (indexPath.row == 0)
     {
-        cell = [[WidgetMatchCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cell_id];
+        NSString *cell_id = @"cell_id";
+        WidgetMatchCell *cell = [tableView dequeueReusableCellWithIdentifier:cell_id];
+        if (cell == nil)
+        {
+            cell = [[WidgetMatchCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cell_id];
+            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        }
+        [cell setData:nil];
+        return cell;
     }
-    [cell setData:nil];
-    return cell;
+    else
+    {
+        NSString *cell_id = @"cell_news_id";
+        WidgetNewsCell *cell = [tableView dequeueReusableCellWithIdentifier:cell_id];
+        if (cell == nil)
+        {
+            cell = [[WidgetNewsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cell_id];
+            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        }
+        [cell setData:nil];
+        return cell;
+    }
+    
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -80,7 +123,15 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 106;
+    if (indexPath.row == 0)
+    {
+        return 106;
+    }
+    else
+    {
+        return 56;
+    }
+    
 }
 
 -(void)openAPP

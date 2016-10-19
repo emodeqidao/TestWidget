@@ -13,7 +13,7 @@
 @interface WidgetNewsCell : UITableViewCell
 {
     UIImageView *teamLogoImgView;
-    UILabel *newsLabel;
+    UILabel *newsContentLabel;
     UILabel *lineLabel;
     
 }

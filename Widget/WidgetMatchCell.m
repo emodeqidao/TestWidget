@@ -13,6 +13,8 @@
 #define kMiddleWidth 88 //比赛比分 的宽度
 
 
+#define kCellWidth (iwidth_screen - kCellLeftMagre * 2)
+
 @implementation WidgetMatchCell
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -20,7 +22,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self)
     {
-        teamNameWidth = (iwidth_screen - kLeftMarge * 2 - kMiddleWidth - 20) / 2;
+        teamNameWidth = (kCellWidth - kLeftMarge * 2 - 66) / 2;
         displayTeamNameWidth = teamNameWidth + kLeftMarge;
         CGFloat leftTeamLogoX = (teamNameWidth - kTeamLogoWidth) / 2;
         
@@ -31,19 +33,21 @@
         
         
         leftTeamNameLabel = [[UILabel alloc] init];
-        leftTeamNameLabel.frame = CGRectMake(0, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth, 30);
+        leftTeamNameLabel.frame = CGRectMake(16, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth, 30);
         leftTeamNameLabel.font = [UIFont systemFontOfSize:15.f];
         leftTeamNameLabel.textAlignment = NSTextAlignmentCenter;
-        leftTeamNameLabel.textColor = SetColorAlpha(ASC_blackColor_212, 0.9);
-        leftTeamNameLabel.backgroundColor = [UIColor yellowColor];
+        leftTeamNameLabel.textColor = defatulColorAlpha(0.9);
+//        leftTeamNameLabel.backgroundColor = [UIColor yellowColor];
         [self.contentView addSubview:leftTeamNameLabel];
         
-        
+        CGFloat middleX = (kCellWidth - kMiddleWidth) / 2;
         leagueLabel = [[UILabel alloc] init];
-        leagueLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame), 10, kMiddleWidth, 14);
+        leagueLabel.frame = CGRectMake(middleX, 10, kMiddleWidth, 14);
         leagueLabel.textAlignment = NSTextAlignmentCenter;
         leagueLabel.font = [UIFont systemFontOfSize:13.f];
-        leagueLabel.textColor = SetColor(ASC_grayColor_505);
+//        leagueLabel.textColor = SetColor(ASC_grayColor_505);
+        leagueLabel.textColor = defatulColorAlpha(0.6);
+//        leagueLabel.backgroundColor = [UIColor purpleColor];
         [self.contentView addSubview:leagueLabel];
         
         dateLabel = [[UILabel alloc] init];
@@ -51,17 +55,28 @@
         dateLabel.textAlignment = NSTextAlignmentCenter;
         dateLabel.font = [UIFont systemFontOfSize:13.f];
         dateLabel.textColor = SetColor(ASC_grayColor_505);
+        dateLabel.hidden = YES;
         [self.contentView addSubview:dateLabel];
         
         timerLabel = [[UILabel alloc] init];
         timerLabel.frame = CGRectMake(CGRectGetMinX(leagueLabel.frame), CGRectGetMaxY(dateLabel.frame) + 8, kMiddleWidth, 19);
         timerLabel.textAlignment = NSTextAlignmentCenter;
         timerLabel.font = [UIFont systemFontOfSize:18.f];
-        timerLabel.textColor = SetColor(ASC_blackColor_212);
+        timerLabel.textColor = defatulColor;
+        timerLabel.hidden = YES;
         [self.contentView addSubview:timerLabel];
         
+        vsLabel = [[UILabel alloc] init];
+        vsLabel.frame = CGRectMake(CGRectGetMinX(leagueLabel.frame), CGRectGetMaxY(leagueLabel.frame) + 10, kMiddleWidth, 36);
+        vsLabel.font = [UIFont boldSystemFontOfSize:30.f];
+        vsLabel.textColor = defatulColor;
+        vsLabel.textAlignment = NSTextAlignmentCenter;
+        vsLabel.hidden = YES;
+        [self.contentView addSubview:vsLabel];
+        
+        
         stateLabel = [[UILabel alloc] init];
-        stateLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + 27, CGRectGetMinY(leftTeamNameLabel.frame), 34, 18);
+        stateLabel.frame = CGRectMake(CGRectGetMinX(leagueLabel.frame) + 27, CGRectGetMinY(leftTeamNameLabel.frame), 34, 18);
         stateLabel.font = [UIFont systemFontOfSize:13.f];
         stateLabel.layer.cornerRadius = 2;
         stateLabel.layer.masksToBounds = YES;
@@ -71,7 +86,7 @@
         
         //right
         rightTeamLogoImgView = [[UIImageView alloc] init];
-        rightTeamLogoImgView.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + kMiddleWidth + leftTeamLogoX, 25, kTeamLogoWidth, kTeamLogoWidth);
+        rightTeamLogoImgView.frame = CGRectMake(kCellWidth - leftTeamLogoX - kLeftMarge - kTeamLogoWidth, 25, kTeamLogoWidth, kTeamLogoWidth);
         rightTeamLogoImgView.backgroundColor = [UIColor orangeColor];
         [self.contentView addSubview:rightTeamLogoImgView];
         
@@ -80,33 +95,57 @@
         rightTeamNameLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + kMiddleWidth, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth, 30);
         rightTeamNameLabel.font = [UIFont systemFontOfSize:15.f];
         rightTeamNameLabel.textAlignment = NSTextAlignmentCenter;
-        rightTeamNameLabel.textColor = SetColorAlpha(ASC_blackColor_212, 0.9);
-        rightTeamNameLabel.backgroundColor = [UIColor yellowColor];
+        rightTeamNameLabel.textColor = defatulColorAlpha(0.9);
+//        rightTeamNameLabel.backgroundColor = [UIColor yellowColor];
         [self.contentView addSubview:rightTeamNameLabel];
+        
+        UILabel *lineLabel = [[UILabel alloc] init];
+        lineLabel.frame = CGRectMake(16, 105.5, self.contentView.frame.size.width, 0.5);
+        lineLabel.backgroundColor = defatulColorAlpha(0.5);
+        [self.contentView addSubview:lineLabel];
+
     }
     return self;
 }
 
 -(void) setData:(NSDictionary *)dicArg
 {
-    leftTeamNameLabel.text = @"切尔西切尔西切尔西切尔西切尔西";
+    //Fixture Playing Played
+    NSString *stateStr = @"Played";
+    
+    leftTeamNameLabel.text = @"1拜仁慕尼黑2";
     CGSize newLeftSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
-    leftTeamNameLabel.frame = CGRectMake(0, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth, newLeftSize.height);
-    
-    
+    leftTeamNameLabel.frame = CGRectMake(2, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 2, newLeftSize.height);
     
     leagueLabel.text = @"西甲联赛";
-//    [leagueLabel sizeToFit];
-    dateLabel.text = @"10-25 星期五";
-//    [dateLabel sizeToFit];
+
     
-    timerLabel.text = @"12:30";
+    if ([stateStr isEqualToString:@"Fixture"])
+    {
+        vsLabel.hidden = YES;
+        dateLabel.hidden = NO;
+        timerLabel.hidden = NO;
+        
+        dateLabel.text = @"10-25 星期五";
+        timerLabel.text = @"12:30";
+    }
+    else
+    {
+        vsLabel.hidden = NO;
+        dateLabel.hidden = YES;
+        timerLabel.hidden = YES;
+        
+        vsLabel.text = @"2 - 6";
+    }
     
-    NSString *stateStr = @"end";
-    if ([stateStr isEqualToString:@"end"])
+    
+    
+    
+    
+    if ([stateStr isEqualToString:@"Played"])
     {
         stateLabel.backgroundColor = SetColorAlpha(ASC_grayColor_505, 0.7);
-        if ([stateStr isEqualToString:@"weikai"])
+        if ([stateStr isEqualToString:@"Fixture"])
         {
             stateLabel.text = @"未开";
         }
@@ -122,9 +161,9 @@
     }
     
     
-    rightTeamNameLabel.text = @"足球控足球控足球控足球控";
+    rightTeamNameLabel.text = @"1拜仁慕尼黑2ddddddd";
     CGSize newRightSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
-    rightTeamNameLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + kMiddleWidth, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth, newRightSize.height);
+    rightTeamNameLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + 66, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 4, newRightSize.height);
 
 }
 
