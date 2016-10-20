@@ -99,72 +99,87 @@
 //        rightTeamNameLabel.backgroundColor = [UIColor yellowColor];
         [self.contentView addSubview:rightTeamNameLabel];
         
+        
         UILabel *lineLabel = [[UILabel alloc] init];
         lineLabel.frame = CGRectMake(16, 105.5, self.contentView.frame.size.width, 0.5);
         lineLabel.backgroundColor = defatulColorAlpha(0.5);
         [self.contentView addSubview:lineLabel];
-
+        
+        
+        tipLabel = [[UILabel alloc] init];
+        tipLabel.frame = CGRectMake(0, 0, kCellWidth, 105);
+        tipLabel.textAlignment = NSTextAlignmentCenter;
+        tipLabel.textColor = defatulColor;
+        tipLabel.hidden = YES;
+        [self.contentView addSubview:tipLabel];
     }
     return self;
 }
 
--(void) setData:(NSDictionary *)dicArg
+-(void) setData:(NSDictionary *)dicArg andType:(NSString *)tipStr
 {
-    //Fixture Playing Played
-    NSString *stateStr = @"Played";
-    
-    leftTeamNameLabel.text = @"1拜仁慕尼黑2";
-    CGSize newLeftSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
-    leftTeamNameLabel.frame = CGRectMake(2, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 2, newLeftSize.height);
-    
-    leagueLabel.text = @"西甲联赛";
-
-    
-    if ([stateStr isEqualToString:@"Fixture"])
+    if (tipStr.length > 0)
     {
-        vsLabel.hidden = YES;
-        dateLabel.hidden = NO;
-        timerLabel.hidden = NO;
-        
-        dateLabel.text = @"10-25 星期五";
-        timerLabel.text = @"12:30";
+        tipLabel.hidden = NO;
+        tipLabel.text = tipStr;
+        [self bringSubviewToFront:tipLabel];
     }
     else
     {
-        vsLabel.hidden = NO;
-        dateLabel.hidden = YES;
-        timerLabel.hidden = YES;
+        tipLabel.hidden = YES;
+        [self sendSubviewToBack:tipLabel];
+        //Fixture Playing Played
+        NSString *stateStr = @"Played";
         
-        vsLabel.text = @"2 - 6";
-    }
-    
-    
-    
-    
-    
-    if ([stateStr isEqualToString:@"Played"])
-    {
-        stateLabel.backgroundColor = SetColorAlpha(ASC_grayColor_505, 0.7);
+        leftTeamNameLabel.text = @"1拜仁慕尼黑2";
+        CGSize newLeftSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
+        leftTeamNameLabel.frame = CGRectMake(2, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 2, newLeftSize.height);
+        
+        leagueLabel.text = @"西甲联赛";
+        
+        
         if ([stateStr isEqualToString:@"Fixture"])
         {
-            stateLabel.text = @"未开";
+            vsLabel.hidden = YES;
+            dateLabel.hidden = NO;
+            timerLabel.hidden = NO;
+            
+            dateLabel.text = @"10-25 星期五";
+            timerLabel.text = @"12:30";
         }
         else
         {
-            stateLabel.text = @"结束";
+            vsLabel.hidden = NO;
+            dateLabel.hidden = YES;
+            timerLabel.hidden = YES;
+            
+            vsLabel.text = @"2 - 6";
         }
+        
+        
+        if ([stateStr isEqualToString:@"Played"])
+        {
+            stateLabel.backgroundColor = SetColorAlpha(ASC_grayColor_505, 0.7);
+            if ([stateStr isEqualToString:@"Fixture"])
+            {
+                stateLabel.text = @"未开";
+            }
+            else
+            {
+                stateLabel.text = @"结束";
+            }
+        }
+        else
+        {
+            stateLabel.backgroundColor = SetColorAlpha(ASC_greenColor_009, 0.7);
+            stateLabel.text = @"进行";
+        }
+        
+        
+        rightTeamNameLabel.text = @"1拜仁慕尼黑2ddddddd";
+        CGSize newRightSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
+        rightTeamNameLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + 66, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 4, newRightSize.height);
     }
-    else
-    {
-        stateLabel.backgroundColor = SetColorAlpha(ASC_greenColor_009, 0.7);
-        stateLabel.text = @"进行";
-    }
-    
-    
-    rightTeamNameLabel.text = @"1拜仁慕尼黑2ddddddd";
-    CGSize newRightSize = [leftTeamNameLabel sizeThatFits:CGSizeMake(displayTeamNameWidth, 50)];
-    rightTeamNameLabel.frame = CGRectMake(CGRectGetMaxX(leftTeamNameLabel.frame) + 66, CGRectGetMaxY(leftTeamLogoImgView.frame) + 11, displayTeamNameWidth - 4, newRightSize.height);
-
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

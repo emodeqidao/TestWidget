@@ -23,11 +23,13 @@
     UILabel *timerLabel;
     UILabel *stateLabel;
     
+    UILabel *tipLabel;
+    
     
     CGFloat teamNameWidth;
     CGFloat displayTeamNameWidth;
 }
 
--(void) setData:(NSDictionary *)dicArg;
+-(void) setData:(NSDictionary *)dicArg andType:(NSString *)tipStr;
 
 @end

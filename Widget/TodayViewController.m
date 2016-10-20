@@ -22,7 +22,15 @@
     [super viewWillAppear:animated];
     if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0)
     {
-        self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
+        if (tipStr)
+        {
+            self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeCompact;
+        }
+        else
+        {
+            self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
+        }
+        
     }
 }
 
@@ -49,6 +57,9 @@
     NSLog(@"%@",[us objectForKey:@"name"]);
     NSLog(@"%@",[us objectForKey:@"age"]);
     
+    tipStr = @"请先添加球队";
+    
+    
     _tabelView = [[UITableView alloc] init];
     _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     _tabelView.backgroundColor = [UIColor clearColor];
@@ -67,12 +78,16 @@
     NSLog(@"%f  %f",iwidth_app,iheight_app);
     
     [self performSelector:@selector(resetframe) withObject:nil afterDelay:5];
+    
 }
 
 -(void) resetframe
 {
+    tipStr = nil;
+    self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeExpanded;
     self.preferredContentSize = CGSizeMake([UIScreen mainScreen].bounds.size.width, 228);
     _tabelView.frame = CGRectMake(0, 0, self.view.frame.size.width, 218);
+    [_tabelView reloadData];
 }
 
 
@@ -97,7 +112,7 @@
             cell = [[WidgetMatchCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cell_id];
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         }
-        [cell setData:nil];
+        [cell setData:nil andType:tipStr];
         return cell;
     }
     else

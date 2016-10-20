@@ -13,5 +13,6 @@
 {
     UITableView *_tabelView;
 
+    NSString *tipStr;
 }
 @end
